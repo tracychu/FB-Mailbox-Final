@@ -17,15 +17,15 @@ class FBMailboxViewController: UIViewController, UIGestureRecognizerDelegate {
     @IBOutlet weak var ListImageView: UIImageView!
     @IBOutlet weak var ArchiveImageView: UIImageView!
     @IBOutlet weak var DeleteImageView: UIImageView!
-
+    @IBOutlet weak var MenuView: UIView!
+    @IBOutlet weak var MailboxView: UIView!
+    
     var messageInitialFrame: CGPoint!
     var laterInitialFrame: CGPoint!
     var listInitialFrame: CGPoint!
     var archiveInitialFrame: CGPoint!
     var deleteInitialFrame: CGPoint!
-    
-    
-    var frictionDrag: CGFloat!
+    var mailboxInitialFrame: CGPoint!
     
     
     override func viewDidLoad() {
@@ -50,9 +50,14 @@ class FBMailboxViewController: UIViewController, UIGestureRecognizerDelegate {
         listInitialFrame = ListImageView.frame.origin
         archiveInitialFrame = ArchiveImageView.frame.origin
         deleteInitialFrame = DeleteImageView.frame.origin
+        mailboxInitialFrame = MailboxView.frame.origin
         
+        
+        MailboxView.userInteractionEnabled = true
+        let edgeGesture = UIScreenEdgePanGestureRecognizer(target: self, action: "onPanMenu:")
+        edgeGesture.edges = UIRectEdge.Left
+        MailboxView.addGestureRecognizer(edgeGesture)
 
-        frictionDrag = 10
         
     }
     
@@ -148,8 +153,22 @@ class FBMailboxViewController: UIViewController, UIGestureRecognizerDelegate {
              
             }
         }
+        
+        
     }
-
+    
+    @IBAction func onPanMenu(sender: UIPanGestureRecognizer) {
+        print("You panned the menu")
+        var translation = sender.translationInView(view)
+        MailboxView.frame.origin.x = mailboxInitialFrame.x + translation.x
+        
+        if sender.state == UIGestureRecognizerState.Ended && translation.x > -260 && translation.x < 100 {
+            UIView.animateWithDuration(0.3, animations: { () -> Void in
+                self.MailboxView.frame.origin.x = self.mailboxInitialFrame.x
+            })
+        }
+    }
+    
 
     /*
     // MARK: - Navigation
